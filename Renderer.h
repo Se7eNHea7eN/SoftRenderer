@@ -5,6 +5,7 @@ class SwapChain;
 class Device;
 class DeviceContext;
 class RenderTargetView;
+class Buffer;
 class Renderer
 {
 public:
@@ -17,5 +18,17 @@ private:
 	DeviceContext* m_pDeviceContext;
 	SwapChain* m_pSwapChain;
 	RenderTargetView* m_pRenderTarget;
+
+	void LoadCube();
+	void LoadSword();
+
+	Buffer* m_pCubeVertexBuffer;
+	Buffer* m_pCubeIndexBuffer;
+
+	Buffer* m_pBladeVertexBuffer;
+	Buffer* m_pBladeIndexBuffer;
+
+	Buffer* m_pSwordVertexBuffer;
+	Buffer* m_pSwordIndexBuffer;
 };
 

@@ -139,22 +139,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Buffer.cpp" />
+    <ClCompile Include="Color.cpp" />
+    <ClCompile Include="DepthStencilView.cpp" />
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="DeviceContext.cpp" />
+    <ClCompile Include="SwordShaders.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderTargetView.cpp" />
     <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="ThirdParty\tiny_obj_loader.cc" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Buffer.h" />
+    <ClInclude Include="Color.h" />
+    <ClInclude Include="DepthStencilView.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="DeviceContext.h" />
+    <ClInclude Include="Math.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderTargetView.h" />
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="ThirdParty\tiny_obj_loader.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
