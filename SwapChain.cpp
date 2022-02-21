@@ -2,19 +2,25 @@
 #include "SwapChain.h"
 #include "Device.h"
 #include "Texture2D.h"
+#include "Window.h"
 
-SwapChain::SwapChain(Device* pDevice, HWND hwnd) : 
-    m_hwnd(hwnd),
+SwapChain::SwapChain(Device* pDevice, Window* pWindow) :
+    m_hwnd((HWND)pWindow->GetNativeWindowHandle()),
+    m_pTargetWindow(pWindow),
     m_pDevice(pDevice),
     m_pBackBuffer(nullptr)
 {
-    m_hdc = GetDC(hwnd);
+    m_hdc = GetDC(m_hwnd);
     m_hBufferDC = CreateCompatibleDC(m_hdc);
 
 }
 void SwapChain::Present()
 {
-    BitBlt(m_hdc, 0, 0, m_pBackBuffer->GetDesc().width, m_pBackBuffer->GetDesc().height, m_hBufferDC, 0, 0, SRCCOPY);
+    RECT windowRect = m_pTargetWindow->GetWindowRect();
+    RECT clientRect = m_pTargetWindow->GetWindowRect();
+    BitBlt(m_hdc, clientRect.left, clientRect.top, clientRect.right, clientRect.bottom, m_hBufferDC, 0, 0, SRCCOPY);
+    //BitBlt(m_hdc, 0, 0, 1280, 720, m_hBufferDC, 0, 0, SRCCOPY);
+
 }
 
 int SwapChain::ResizeBuffers(int width, int height)

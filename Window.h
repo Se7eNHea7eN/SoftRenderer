@@ -24,14 +24,14 @@ public:
 	{
 		m_onWindowClose = onWindowClose;
 	}
-
-	int Width()
+	virtual void SetOnWindowMoveCallback(std::function<void(RECT)> onWindowMove)
 	{
-		return m_nWidth;
+		m_onWindowMove = onWindowMove;
 	}
-	int Height()
+
+	RECT GetWindowRect()
 	{
-		return m_nHeight;
+		return m_windowRect;
 	}
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -39,5 +39,8 @@ protected:
 	HWND m_hWnd;
 	std::function<void(int, int)> m_onWindowResize;
 	std::function<void(void)> m_onWindowClose;
+	std::function<void(RECT)> m_onWindowMove;
+	RECT m_windowRect;
+	RECT m_clientRect;
 	int m_nWidth, m_nHeight;
 };

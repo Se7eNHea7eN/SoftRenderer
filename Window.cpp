@@ -8,21 +8,13 @@ Window* currentWindow;
 bool Window::InitWindow(int width, int height, const char* windowName)
 {
 	HINSTANCE instance = (HINSTANCE)GetModuleHandle(NULL);
-	WNDCLASSEX wc;
 
-	ZeroMemory(&wc, sizeof(WNDCLASSEX));
+	WNDCLASS wc = { CS_BYTEALIGNCLIENT, (WNDPROC)::WindowProc, 0, 0, 0,
+		NULL, NULL, NULL, NULL, _T(windowName) };
 
-	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = ::WindowProc;
-	wc.hInstance = instance;
-	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
-	wc.lpszClassName = _T(windowName);
+	RegisterClass(&wc);
 
-	RegisterClassEx(&wc);
-
-	m_hWnd = CreateWindowEx(WS_EX_ACCEPTFILES,
+	m_hWnd = CreateWindow(
 		_T(windowName), // name of the window class
 		_T(windowName), // title of the window
 		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, // window style
@@ -36,6 +28,24 @@ bool Window::InitWindow(int width, int height, const char* windowName)
 		nullptr); // used with multiple windows, NULL
 	m_nWidth = width;
 	m_nHeight = height;
+
+	m_windowRect = { 0, 0, width, height };
+	m_clientRect = { 0, 0, width, height };
+	::GetWindowRect(m_hWnd, &m_windowRect);
+	::GetClientRect(m_hWnd, &m_clientRect);
+
+	int wx, wy, sx, sy;
+	//RECT rect;
+	//AdjustWindowRect(&rect, GetWindowLong(m_hWnd, GWL_STYLE), 0);
+	wx = m_windowRect.right - m_windowRect.left;
+	wy = m_windowRect.bottom - m_windowRect.top;
+	sx = (GetSystemMetrics(SM_CXSCREEN) - wx) / 2;
+	sy = (GetSystemMetrics(SM_CYSCREEN) - wy) / 2;
+	if (sy < 0) sy = 0;
+	SetWindowPos(m_hWnd, NULL, sx, sy, wx, wy, (SWP_NOCOPYBITS | SWP_NOZORDER | SWP_SHOWWINDOW));
+	SetForegroundWindow(m_hWnd);
+	::GetWindowRect(m_hWnd, &m_windowRect);
+	::GetClientRect(m_hWnd, &m_clientRect);
 	return true;
 }
 
@@ -60,27 +70,45 @@ LRESULT Window::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 {
 	// sort through and find what code to run for the message given
 	switch (message) {
-	case WM_CREATE: {
-
-	}
-				  break;
-	case WM_SIZE: {
-		RECT rc;
-		GetClientRect(hWnd, &rc);
-		m_onWindowResize(rc.right - rc.left, rc.bottom - rc.top);
-	}
-				break;
-				// this message is read when the window is closed
-	case WM_DESTROY: {
-		// close the application entirely
-		m_onWindowClose();
-		PostQuitMessage(0);
-		return 0;
-	}
-				   break;
-	case WM_DISPLAYCHANGE:
-		// InvalidateRect(hWnd, nullptr, false);
+		case WM_CREATE: 
+		{
+			::GetWindowRect(hWnd, &m_windowRect);
+			::GetClientRect(hWnd, &m_clientRect);
+		}
 		break;
+		case WM_SIZE: 
+		{
+			::GetClientRect(hWnd, &m_clientRect);
+			::GetWindowRect(hWnd, &m_windowRect);
+			m_onWindowResize(m_windowRect.right - m_windowRect.left, m_windowRect.bottom - m_windowRect.top);
+		}
+		break;
+		// this message is read when the window is closed
+		case WM_DESTROY: 
+		{
+			// close the application entirely
+			m_onWindowClose();
+			PostQuitMessage(0);
+			return 0;
+		}
+		break;
+		case WM_MOVE:
+		{
+			::GetWindowRect(hWnd, &m_windowRect);
+			::GetClientRect(hWnd, &m_clientRect);
+
+			if (m_onWindowMove)
+			{
+				m_onWindowMove(m_windowRect);
+			}
+		
+		}
+		break;
+		case WM_DISPLAYCHANGE:
+			RECT rc;
+			GetClientRect(hWnd, &rc);
+			// InvalidateRect(hWnd, nullptr, false);
+			break;
 	}
 	// Handle any messages the switch statement didn't
 	return

@@ -3,7 +3,7 @@
 int main(int _argc, const char* const* _argv)
 {
 	Window window;
-	window.InitWindow(1920, 1080, "SoftRenderer");
+	window.InitWindow(1280, 720, "SoftRenderer");
 	window.ShowWindow();
 	bool isExit = false;
 
@@ -19,8 +19,8 @@ int main(int _argc, const char* const* _argv)
 		auto thisTime = GetTickCount64();
 		renderer.Tick((thisTime - lastTime) / 1000.0);
 		lastTime = thisTime;
-		renderer.Render();
 		window.MessageProcess();
+		renderer.Render();
 	}
 
 }

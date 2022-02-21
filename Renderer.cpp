@@ -8,9 +8,13 @@ void Renderer::Init(Window* pWindow)
 	{
 			//this->Resize(width, height);
 	});
+	pWindow->SetOnWindowMoveCallback([](RECT rect) -> void {
+
+	});
 	::CreateDevice(&m_pDevice, &m_pDeviceContext);
-	m_pDevice->CreateSwapChain(&m_pSwapChain,(HWND)pWindow->GetNativeWindowHandle());
-	Resize(pWindow->Width(), pWindow->Height());
+	m_pDevice->CreateSwapChain(&m_pSwapChain, pWindow);
+	RECT rect = pWindow->GetWindowRect();
+	Resize(rect.right- rect.left, rect.bottom- rect.top);
 }
 
 void Renderer::Tick(float deltaTime)

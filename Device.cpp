@@ -2,9 +2,10 @@
 #include "SwapChain.h"
 #include "DeviceContext.h"
 #include "Texture2D.h"
-int Device::CreateSwapChain(SwapChain** ppSwapChain, HWND hwnd)
+#include "Window.h"
+int Device::CreateSwapChain(SwapChain** ppSwapChain, Window* pWindow)
 {
-	*ppSwapChain = new SwapChain(this,hwnd);
+	*ppSwapChain = new SwapChain(this, pWindow);
 	return 0;
 }
 
